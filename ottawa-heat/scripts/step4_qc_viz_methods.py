@@ -200,11 +200,18 @@ def sanity_checks(df):
 
 
 def write_methods(df, sanity_lines, approved):
-    n_scenes = len(approved) if approved else 0
+    in_window = [s for s in (approved or []) if int(s["year"]) in C.YEARS]
+    used = [s for s in in_window if s["date"] not in C.COMPOSITE_EXCLUDE_DATES]
+    excluded = [s for s in in_window if s["date"] in C.COMPOSITE_EXCLUDE_DATES]
+    n_scenes = len(used)
     scene_lines = "\n".join(
         f"  - {s['scene_id']} ({s['date']}, {s['satellite']}, "
-        f"cloud {s['cloud_cover']}%)" for s in (approved or [])
+        f"cloud {s['cloud_cover']}%)" for s in used
     )
+    excluded_lines = "\n".join(
+        f"  - {s['scene_id']} ({s['date']}, {s['satellite']}, "
+        f"cloud {s['cloud_cover']}%)" for s in excluded
+    ) or "  - none"
     text = f"""# Methods: Ottawa neighbourhood heat island & greenness
 
 Accessed: {date.today().isoformat()}
@@ -216,8 +223,13 @@ Accessed: {date.today().isoformat()}
   water removed (`{C.BOUNDARY_SHP.stem}`), {len(df)} neighbourhoods.
   Join key: `{C.ONS_ID_FIELD}`.
 
-## Scenes used ({n_scenes})
+## Scenes used in the composites ({n_scenes})
 {scene_lines}
+
+## Scenes excluded from the composites after quality control ({len(excluded)})
+These passed the scene-level cloud filter, but the QA_PIXEL mask missed cloud
+(see `config.COMPOSITE_EXCLUDE_DATES`).
+{excluded_lines}
 
 ## Time coverage
 Summer (1 June - 31 August) of 2023, 2024 and 2025.
@@ -262,6 +274,7 @@ warmer than air temperature on sunny days and vary strongly by surface type.
 - Snapshot timing: Landsat overpass is about 11:45 local daylight time; this does not capture
   afternoon peak heat or night-time heat retention.
 - Median compositing reduces but does not eliminate residual cloud/haze effects.
+  Tiles with residual cloud found in quality control are excluded by date.
 """
     (C.OUTPUTS_DIR / "METHODS.md").write_text(text)
 

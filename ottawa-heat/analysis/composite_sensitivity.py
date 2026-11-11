@@ -4,9 +4,11 @@ Sensitivity of the 2023 to 2025 median LST composite to individual tiles.
 Rebuilds the all-years composite from the cached per-scene LST tiles
 (data/scenes/<scene_id>_LST_C.tif) under four settings and writes the
 neighbourhood means for each:
-  1. all approved tiles in the composite years (replicates step2 and step3)
+  1. all approved tiles in the composite years, including the dates in
+     config.COMPOSITE_EXCLUDE_DATES
   2. without the tile(s) of 2024-06-06
-  3. without the tiles of 2024-06-06 and 2023-06-28
+  3. without the tiles of 2024-06-06 and 2023-06-28 (replicates step2 and
+     step3, which exclude both dates)
   4. all tiles, with pixels below 0 deg C set to missing
 
 Output:

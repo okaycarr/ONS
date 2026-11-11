@@ -32,8 +32,10 @@ conversions, compositing), `scripts/landcoverlib.py` (built-up mask),
 ## Scene list
 
 `outputs/approved_scenes.json` is the scene list used: 38 tiles on 23 dates
-in the summers of 2023 to 2025 (composites and per-date panel) and 7 tiles
-on 4 dates in June and July 2026 (per-date panel only). Each record has the
+in the summers of 2023 to 2025 that passed scene selection, and 7 tiles on
+4 dates in June and July 2026 (per-date panel only). Two of the 38 tiles
+(2023-06-28 and 2024-06-06) are excluded from the composites after quality
+control, so the composites use 36 tiles on 21 dates. Each record has the
 scene ID, date, satellite, path, row, scene cloud cover, station daily
 maximum air temperature and station air temperature at the overpass.
 Step 1 writes a recommended list; the list in this repository is the one
@@ -73,6 +75,7 @@ Steps 1 and 2 need internet access. Per-scene products are cached in
 - Built-up land: ESA WorldCover class 50, majority of 10 m cells within a 30 m cell
 - Per-date panel: a neighbourhood-date needs at least half its pixels valid; a date needs at least 10 valid neighbourhoods
 - Hot day: station daily maximum air temperature of 30 °C or more
+- Dates excluded from the composites: 2023-06-28 and 2024-06-06 (residual cloud that passed the QA_PIXEL mask)
 - Date excluded from the per-date panel: 2023-06-28 (residual cloud)
 
 ## Known limitations
@@ -80,5 +83,6 @@ Steps 1 and 2 need internet access. Per-scene products are cached in
 - Landsat thermal data are acquired at about 100 m and resampled to 30 m.
 - Observations are clear-sky, late-morning (about 11:45 local daylight time) snapshots.
 - The QA_PIXEL mask missed cloud in the tiles of 2023-06-28 and 2024-06-06.
-  Both tiles are in the composites; `analysis/composite_sensitivity.py`
-  measures the effect of removing them.
+  Both are excluded from the composites (`config.COMPOSITE_EXCLUDE_DATES`);
+  `analysis/composite_sensitivity.py` measures the effect of the exclusion.
+  Residual cloud in other tiles cannot be ruled out.

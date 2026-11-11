@@ -132,6 +132,10 @@ def main() -> None:
         sid = rec["scene_id"]
         yr = int(rec["year"])
         print(f"  [{i}/{len(approved)}] {sid} ({yr}) ...", flush=True)
+        if rec["date"] in C.COMPOSITE_EXCLUDE_DATES:
+            print("      (QC-failed date, excluded from composites; "
+                  "see config.COMPOSITE_EXCLUDE_DATES)")
+            continue
         try:
             cached = load_cached(sid, C.SCENES_DIR)
             if cached is not None:

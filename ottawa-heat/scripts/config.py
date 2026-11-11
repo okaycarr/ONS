@@ -115,10 +115,16 @@ ECCC_BULK_URL = "https://climate.weather.gc.ca/climate_data/bulk_data_e.html"
 # above this threshold (deg C). Note: air temperature, not surface or humidex.
 HOT_DAY_TMAX_C = 30.0
 
-# Dates excluded from the heat-wave panel (QC failures).
-# 2023-06-28: citywide LST of ~11 C, implausibly cold; residual cloud
-# contamination that slipped the QA mask.
+# Dates excluded from the per-date panel (QC failures).
+# 2023-06-28: citywide LST of about 11 C, below the station air temperature;
+# residual cloud that passed the QA mask.
 EXCLUDE_DATES = {"2023-06-28"}
+
+# Dates excluded from the median composites (QC failures).
+# 2023-06-28: as above.
+# 2024-06-06: 2.3 percent of city pixels remain after masking, with values
+# between -83 and -25 C (cloud tops that passed the QA mask).
+COMPOSITE_EXCLUDE_DATES = {"2023-06-28", "2024-06-06"}
 
 # Heat-wave analysis outputs.
 DAILY_TMAX_CSV = OUTPUTS_DIR / "ottawa_daily_tmax_summers.csv"
