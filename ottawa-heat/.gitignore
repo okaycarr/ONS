@@ -1,0 +1,5 @@
+data/
+outputs/*
+!outputs/approved_scenes.json
+__pycache__/
+*.pyc
